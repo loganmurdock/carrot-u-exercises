@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Array Practice</title>
+  <style>
+    table, th, td {
+      border: 1px solid rgba(218, 218, 218, 0.8);
+      border-collapse: collapse;
+    }
+    table {
+      width: 100%;
+    }
+    th {
+      text-align: left;
+      background-color: lightgray;
+      color: rgb(53, 53, 53);
+      font-weight: 500
+    }
+    tr:nth-child(even) {
+      background-color: rgba(132, 181, 197, 0.329);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Data</h1>
+  <h2>Warehouses</h2>
+  <div id='warehouses'></div>
+
+  <h2>Orders</h2>
+  <div id='orders'></div>
+
+  <h1>Problems</h1>
+  <h2>Problem 1 - Filter</h2>
+  <h3>
+    1. Filter the list of warehouses created prior to November 2013
+  </h3>
+  <h4>Output:</h4>
+  <div id='problem1'></div>
+  <hr />
+
+  <h2>Problem 2 - Map</h2>
+  <h3> 2. Give us an array of all warehouses with their name and created date
+       Each value should be in the following format: "Example, launched: YYYY/MM/DD"
+  </h3>
+  <h4>Output:</h4>
+  <div id='problem2'/></div>
+
+  <h2>Problem 3 - Sort</h2>
+  <h3>3. Sort the warehouses by created_at, oldest to newest</h3>
+  <h4>Output:</h4>
+  <div id='problem3'/></div>
+
+  <h2>Problem 4 - Reduce</h2>
+  <h3>4. What's the order total for all orders</h3>
+  <h4>Output:</h4>
+  <div id='problem4'/></div>
+
+  <h2>Problem 5 - Tricky Sort</h2>
+  <h3>5. Sort the warehouses by days between created and launch_date</h3>
+  <h4>Output:</h4>
+  <div id='problem5'/></div>
+
+  <h2>Problem 6 - Map + Filter</h2>
+  <h3>6. create a list of warehouses with the 'Organic' category</h3>
+  <h4>Output:</h4>
+  <div id='problem6'/></div>
+
+  <h2>Problem 7 - Sort (again)</h2>
+  <h3>7. Sort the order by user alphabetically by last name</h3>
+  <h4>Output:</h4>
+  <div id='problem7'/></div>
+
+  <h2>Problem 8 - Reduce</h2>
+  <h3>8. Create a hash for counts of each first name</h3>
+  <h4>Output:</h4>
+  <div id='problem8'/></div>
+
+  <script>
+    // Some data we can work with
+    const warehouses = [
+      { id: 5	, created_at: '2013-04-12', launch_date: '2017-10-05', name: 'Costco', categories:	['Groceries'], is_white_label:	true },
+      { id: 3	, created_at: '2013-02-22', launch_date: '2014-09-08', name: 'Whole Foods Market', categories: ['Organic','Groceries','Specialty'], is_white_label:	false },
+      { id: 13, created_at: '2014-01-03', launch_date: null, name: 'Market Basket', categories:	[], is_white_label:	false },
+      { id: 7	, created_at: '2013-09-18', launch_date: '2018-03-08', name: 'Mariano\'s', categories:	['Groceries','Organic','Alcohol'], is_white_label:	true },
+      { id: 1	, created_at: '2012-12-28', launch_date: '2018-01-11', name: 'Safeway', categories: ['Groceries','Bakery','Deli'], is_white_label: true },
+      { id: 10, created_at: '2013-11-13', launch_date: '2018-03-28', name: 'Jewel-Osco', categories:	['Groceries','Bakery','Deli'], is_white_label:	true },
+      { id: 14, created_at: '2014-01-23', launch_date: null, name: 'Harris Teeter', categories:	[], is_white_label:	false },
+      { id: 11, created_at: '2013-11-25', launch_date: '2017-12-13', name: 'Star Market', categories:	['Groceries','Bakery','Deli'], is_white_label:	true },
+      { id: 12, created_at: '2013-12-26', launch_date: '2017-08-31', name: 'ALDI', categories:	['Groceries','Produce','Organic'], is_white_label:	false },
+      { id: 9	, created_at: '2013-11-01', launch_date: null, name: 'Berkeley Bowl', categories:	[], is_white_label:	false },
+    ]
+    document.getElementById('warehouses').innerHTML = createTable(warehouses)
+
+    const orders = [
+      { id: 258079635, total: 42.58, user_id: 22512113, user_name: 'Donna Kim' },
+      { id: 258080756, total: 40.51, user_id: 29713475, user_name: 'Melissa Giarraputo' },
+      { id: 258077200, total: 160.81, user_id: 28330994, user_name: 'Ryan Taft' },
+      { id: 258034480, total: 187.92, user_id: 24363142, user_name: 'Veronique Sy-Siggins' },
+      { id: 258066828, total: 107.09, user_id: 110788, user_name: 'Ryan Swank' },
+      { id: 258062249, total: 200.46, user_id: 22504988, user_name: 'Donna Conejero' },
+      { id: 258075441, total: 131.92, user_id: 26382858, user_name: 'Samantha Gerlach' },
+      { id: 258051685, total: 446.28, user_id: 28920623, user_name: 'Melissa Stitt' },
+      { id: 258041991, total: 187.86, user_id: 22257146, user_name: 'Erica de Leon' },
+      { id: 257744090, total: 78.68, user_id: 22616286, user_name: 'Tara Ciccone' },
+    ]
+    document.getElementById('orders').innerHTML = createTable(orders)
+
+    // Array.prototype.filter()
+    // 1. Filter the list of warehouses created prior to November 2013
+    const firstWarehouses = warehouses.filter(warehouse => {
+      return Date.parse(warehouse.created_at) < Date.parse('2013-11-01')
+    })
+    console.table(firstWarehouses)
+    document.getElementById('problem1').innerHTML = createTable(firstWarehouses)
+
+    // Array.prototype.map()
+    // 2. Give us an array of all warehouses with their name and created date
+    // Each value should be in the following format: "Example, launched: YYYY/MM/DD"
+    // Hint: date will need adjustment to match the format
+    const whiteLabels = warehouses.map(warehouse => {
+      return `${warehouse.name}, launched: ${warehouse.created_at.split('-').join('/')}`
+    })
+    console.table(whiteLabels)
+    document.getElementById('problem2').innerHTML = createTable(whiteLabels)
+
+    // Array.prototype.sort()
+    // 3. Sort the warehouses by created_at, oldest to newest
+    const sorted = warehouses.sort((warehouseA, warehouseB) => {
+      return Date.parse(warehouseA.created_at) - Date.parse(warehouseB.created_at)
+    })
+    // Can either use Date parse or new Date
+    console.table(sorted)
+    document.getElementById('problem3').innerHTML = createTable(sorted)
+
+    // Array.prototype.reduce()
+    // 4. What's the order total for all orders
+    const orderTotal = orders.reduce(((total, order) => {
+      return total + order.total
+    }), 0)
+    console.log(orderTotal)
+    document.getElementById('problem4').innerHTML = orderTotal
+
+    // 5. Sort the warehouses by days between created and launch_date
+    const launchLength = warehouses.sort((warehouseA, warehouseB) => {
+      return warehouseLaunchPeriod(warehouseA) - warehouseLaunchPeriod(warehouseB)
+    })
+
+    function warehouseLaunchPeriod(warehouse) {
+      if (!warehouse.launch_date) { return 0 }
+      return Date.parse(warehouse.launch_date) - Date.parse(warehouse.created_at)
+    }
+    console.table(launchLength)
+    document.getElementById('problem5').innerHTML = createTable(launchLength)
+
+    // 6. create a list of warehouses with the 'Organic' category
+    const organicWarehouses = warehouses.map(warehouse => {
+      if (warehouse.categories.includes('Organic')) {
+        return warehouse
+      }
+    }).filter(warehouse => !!warehouse)
+    console.table(organicWarehouses)
+    document.getElementById('problem6').innerHTML = createTable(organicWarehouses)
+
+    // 7. sort Exercise
+    // Sort the order by user alphabetically by last name
+    let sortedUsers = orders.sort((orderA, orderB) => {
+      return parseLastName(orderA.user_name) > parseLastName(orderB.user_name)
+    })
+
+    function parseLastName(userName) {
+      return userName.toUpperCase().split(' ').pop()
+    }
+    console.table(sortedUsers)
+    document.getElementById('problem7').innerHTML = createTable(sortedUsers)
+
+    // 8. Reduce Exercise
+    // Create a hash for counts of each first name
+    let firstNames = orders.reduce((hash, order) => {
+      const firstName = parseFirstName(order)
+      if(!hash[firstName]) { hash[firstName] = 0 }
+      hash[firstName]++
+      return hash
+    }, {})
+
+    function parseFirstName(order) {
+      return order.user_name.split(' ')[0]
+    }
+    console.log(firstNames)
+    document.getElementById('problem8').innerHTML = JSON.stringify(firstNames)
+
+    // Challenge problem
+    // Create a method that creates html output similar to console.table.
+    // Hint - be careful with problem #2.
+    function createTable(array) {
+      let table = '<table>'
+      const isArray = typeof array[0] !== 'object'
+      const headerColumns = isArray ? ['(index)', 'Value'] : Object.keys(array[0])
+      table += createRow(headerColumns, true)
+      array.forEach((row, index) => {
+        table += createRow(isArray ? [index, row] : Object.values(row))
+      })
+      table += '</table>'
+      return table
+    }
+
+    function createRow(array, header = false) {
+      const rowType = header ? 'th' : 'td'
+      let row =  '<tr>'
+      array.forEach(ele => {
+        let style = ''
+        switch(typeof ele){
+          case 'string':
+            style = 'color: #ac222c;'
+            break
+          case 'number':
+            style = 'color: #1954b8;'
+            break
+          case 'boolean':
+            style = 'color: #116644;'
+            break
+          default:
+            style = 'color: black'
+        }
+        row += `
+          <${rowType} style="${header ? "color: black" : style}">
+            ${ele}
+          </${rowType}>
+        `
+      })
+      row += '</tr>'
+      return row
+    }
+
+    // Challenge problem ++
+    // Style the table to look similar to console.table output
+    // Hint - you can do most styling in a style tag, but cell coloring by
+    // type needs to be in the JS function
+
+
+  </script>
+</body>
+</html>
